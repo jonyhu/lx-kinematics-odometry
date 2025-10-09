@@ -12,11 +12,9 @@ def delta_phi(ticks: int, prev_ticks: int, resolution: int) -> float:
     Return:
         dphi: Rotation of the wheel in radians.
     """
-
-    # TODO: these are random values, you have to implement your own solution in here
-    dphi = np.random.random()
-    # ---
-    return dphi
+    N_tot = resolution
+    alpha = 2 * np.pi/ N_tot
+    return (ticks - prev_ticks)*alpha
 
 
 def estimate_pose(
@@ -47,10 +45,17 @@ def estimate_pose(
         y_curr:                  estimated y coordinate
         theta_curr:              estimated heading
     """
+    d_left = R * delta_phi_left
+    d_right = R * delta_phi_right
+    d_A = (d_right + d_left)/2
 
-    # These are random values, replace with your own
-    x_curr = np.random.random()
-    y_curr = np.random.random()
-    theta_curr = np.random.random()
-    # ---
+    delta_theta = (d_right - d_left)/baseline
+    theta_curr = theta_prev + delta_theta
+
+    delta_x = d_A * np.cos(theta_curr)
+    delta_y = d_A * np.sin(theta_curr)
+  
+    x_curr = x_prev + delta_x
+    y_curr = y_prev + delta_y
+    
     return x_curr, y_curr, theta_curr
